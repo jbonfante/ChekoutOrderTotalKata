@@ -58,6 +58,13 @@ describe ProductManager do
       end
     end
   end
+
+  context 'find product' do
+    it 'should respond to' do
+      expect(subject).to respond_to(:find_product)
+    end
+
+  end
 end
 
 

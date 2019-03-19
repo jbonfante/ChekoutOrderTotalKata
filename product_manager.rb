@@ -18,6 +18,10 @@ class ProductManager
       logger.error('Adding Product') { "#{msg}" }
     end
   end
+
+  def find_product
+
+  end
 end
 
 

@@ -2,7 +2,7 @@ class PointOfSaleSystem
   attr_accessor :products
 
   def initialize
-    self.products = ProductManager.new
+    @products = ProductManager.new
   end
 
   def total

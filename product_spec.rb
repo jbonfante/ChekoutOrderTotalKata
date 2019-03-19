@@ -15,6 +15,10 @@ describe Product do
       expect(subject.by_weight).to be(false)
       expect(subject.unit).to be_nil
     end
+
+    it 'should have an id' do
+      expect(subject.id).to be(0)
+    end
   end
 
   context "Product with unit(each) price" do
@@ -39,8 +43,7 @@ describe Product do
 
     it 'should ignore unit is by weight is false' do
       subject.unit = 'lb'
-      puts subject
-
+      expect(subject.to_s).to eq('Product: Product 1 	 Price: $2.00/each')
     end
 
   end

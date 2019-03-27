@@ -69,26 +69,55 @@ describe ProductManager do
   end
 
   context 'find product' do
-    it 'should respond to' do
-      expect(subject).to respond_to(:find_product).with(1).argument
+    context 'validations' do
+
+      it 'should respond to' do
+        expect(subject).to respond_to(:find_product).with(1).argument
+      end
+
+      it 'should fail without valid options, id or name' do
+        expect{ subject.find_product({}) }.to raise_error(ArgumentError)
+      end
+
+      it 'should accept only id' do
+        expect{ subject.find_product({id: 0}) }.not_to raise_error
+      end
+
+      it 'should only accept integer ID' do
+        expect{ subject.find_product({id: 'A'}) }.to raise_error ArgumentError
+        expect{ subject.find_product({id: ''}) }.to raise_error ArgumentError
+      end
+
+      it 'should accecpt only a non-empty name string' do
+        expect{ subject.find_product({name:'A'}) }.not_to raise_error
+      end
+
+      it 'should not allow empty names' do
+        expect{ subject.find_product({name:''}) }.to raise_error ArgumentError
+      end
     end
 
-    it 'should fail without valid options, id or name' do
-      expect{ subject.find_product({}) }.to raise_error(ArgumentError)
-    end
+    context 'found product' do
+      before(:each) do
+        subject.add_product({name:'Ground beef', price: 0.99, by_weight: true, unit: 'lb'})
+        subject.add_product({name:'test', price: 1.99 })
+      end
+      it 'should find product by id' do
+        product = subject.find_product({id: 0})
+        expect(product.id).to eql(0)
+        expect(product).to be_an_instance_of(Product)
+      end
 
-    it 'should accept only id' do
-      expect{ subject.find_product({id: 0}) }.not_to raise_error
-    end
+      it 'should return nil if not found' do
+        product = subject.find_product({id: 10})
+        expect(product).to eql(nil)
+      end
 
-    it 'should accecpt only a name string' do
-      expect{ subject.find_product({name:'A'}) }.not_to raise_error
+      it 'should find product by name' do
+        beef = subject.find_product({name: 'ground beef'})
+        expect(beef).to be_an_instance_of(Product)
+      end
     end
-
-    it 'should not allow empty names' do
-      expect{ subject.find_product({name:''}) }.to raise_error
-    end
-
   end
 end
 

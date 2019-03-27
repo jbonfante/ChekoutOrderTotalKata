@@ -22,6 +22,6 @@ class Product
   end
 
   def to_s
-    "Product: #{name} \t Price: #{cost}"
+    "Product: \tID: #{id} #{name} \t Price: #{cost}"
   end
 end

@@ -29,7 +29,7 @@ describe Product do
     end
 
     it 'should have a name and price with each' do
-      expect(subject.to_s).to eq("Product: Product 1 \t Price: $2.00/each")
+      expect(subject.to_s).to eq("Product: \tID: 0 Product 1 \t Price: $2.00/each")
     end
 
     it 'should have a price' do
@@ -43,7 +43,7 @@ describe Product do
 
     it 'should ignore unit is by weight is false' do
       subject.unit = 'lb'
-      expect(subject.to_s).to eq('Product: Product 1 	 Price: $2.00/each')
+      expect(subject.to_s).to eq("Product: \tID: 0 Product 1 \t Price: $2.00/each")
     end
 
   end
@@ -56,7 +56,7 @@ describe Product do
     end
 
     it 'should have a name and price with unit' do
-      expect(subject.to_s).to eq("Product: Product 1 \t Price: $2.00/lb")
+      expect(subject.to_s).to eq("Product: \tID: 0 Product 1 \t Price: $2.00/lb")
     end
 
     it 'should have a price' do

@@ -75,6 +75,26 @@ describe Product do
       end
     end
 
+    context 'Update product info' do
+      subject { Product.new({name: 'Product 1', price: 2.00})}
+
+      it 'should update name' do
+        expect {subject.update({name: 'Changed'})}.to change {subject.name}.to('Changed')
+        end
+
+      it 'should update price' do
+        expect {subject.update({price: 0.99})}.to change {subject.price}.to(0.99)
+      end
+
+      it 'should update unit and weight' do
+        expect {subject.update({by_weight: true, unit: 'lb'})}
+          .to change {subject.by_weight}.to(true)
+                .and change {subject.unit}.to('lb')
+
+      end
+
+    end
+
   end
 
 end

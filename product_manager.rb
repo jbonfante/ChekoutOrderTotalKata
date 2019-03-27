@@ -8,18 +8,31 @@ class ProductManager
     @id_counter   = 0
     @product_list = []
     @logger       = Logger.new(STDOUT)
-    logger.level  = Logger::ERROR
+    logger.level  = Logger::INFO
   end
 
-  def add_product(options={})
+  def add_product(options={update: false})
     begin
-      product = Product.new(options.merge({id: id_counter}))
-      product_list.push(product)
-      self.id_counter += 1
+      existing_product = find_product_by_name(options[:name])
+      if existing_product.nil?
+        product = Product.new(options.merge({id: id_counter}))
+        product_list.push(product)
+        self.id_counter += 1
+      elsif options[:update].present?
+        update_product(existing_product.id, options)
+      else
+        logger.error("#{options[:name]} has already been added.")
+        logger.info("If you want to update instead, pass `update: true` in options parameters.")
+      end
+
 
     rescue ArgumentError => msg
       logger.error('Product Manager - Adding Product: ') { "#{msg}" }
     end
+  end
+
+  def update_product(product_id, options)
+    find_product_by_id(product_id).update(options)
   end
 
   def find_product(options={id:nil , name:nil})

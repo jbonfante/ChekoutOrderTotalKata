@@ -29,9 +29,22 @@ describe ProductManager do
         .to change { subject.product_list.count }
               .from(0).to(1)
 
-      p1 = subject.product_list.first
+      p1 = subject.product_list.last
       expect(p1.by_weight).to eq(false)
       expect(p1.id).to eq(0)
+    end
+
+    it 'should ignore an id passed in parameters' do
+      subject.add_product(product_info.merge({id: 20}))
+      p1 = subject.product_list.last
+      expect(p1.id).to eq(0)
+    end
+
+    it 'should update product if update:true' do
+      subject.add_product(product_info)
+      subject.add_product(product_info.merge({price: 1.99, update: true}))
+      updated = subject.find_product_by_id(0)
+      expect(updated.price).to eql(1.99)
     end
 
     context 'should add multiple products' do
@@ -43,6 +56,12 @@ describe ProductManager do
         expect{ subject.add_product(product_info.merge({name: 'test3', by_weight: false})) }
           .to change { subject.product_list.count }
                 .from(1).to(2)
+      end
+
+      it 'should not add the same product twice' do
+        subject.add_product(product_info)
+        subject.add_product(product_info)
+        expect(subject.product_list.count).to eql(2)
       end
 
       it 'should set incremental id value' do

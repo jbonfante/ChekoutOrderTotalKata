@@ -1,4 +1,5 @@
 require 'logger'
+require 'active_support/all'
 
 class ProductManager
   attr_accessor :product_list, :logger, :id_counter
@@ -17,12 +18,15 @@ class ProductManager
       self.id_counter += 1
 
     rescue ArgumentError => msg
-      logger.error('Error Adding Product: ') { "#{msg}" }
+      logger.error('Product Manager - Adding Product: ') { "#{msg}" }
     end
   end
 
   def find_product(options={id:nil , name:nil})
     raise ArgumentError.new('ID or NAME are required') unless [:name, :id].map { |x| options.include?(x)}.any?
+    if options[:name]
+      raise ArgumentError.new('Name is blank') unless options[:name].present?
+    end
 
   end
 end

@@ -78,7 +78,15 @@ describe ProductManager do
     end
 
     it 'should accept only id' do
-      expect{ subject.find_product({id: 0})}.not_to raise_error
+      expect{ subject.find_product({id: 0}) }.not_to raise_error
+    end
+
+    it 'should accecpt only a name string' do
+      expect{ subject.find_product({name:'A'}) }.not_to raise_error
+    end
+
+    it 'should not allow empty names' do
+      expect{ subject.find_product({name:''}) }.to raise_error
     end
 
   end

@@ -1,8 +1,9 @@
 class PointOfSaleSystem
-  attr_accessor :products
+  attr_accessor :products, :markdowns
 
   def initialize
     @products = ProductManager.new
+    @markdowns = MarkdownManager.new
   end
 
   def total

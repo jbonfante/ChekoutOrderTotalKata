@@ -1,5 +1,5 @@
 require 'rspec'
-require './product'
+require './app/products/product'
 
 describe Product do
   context "New empty product" do

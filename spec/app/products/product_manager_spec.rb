@@ -1,5 +1,5 @@
 require 'rspec'
-require './product_manager'
+require './app/products/product_manager'
 
 describe ProductManager do
 

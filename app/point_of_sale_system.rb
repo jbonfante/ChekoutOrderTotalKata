@@ -1,6 +1,6 @@
-require './product_manager'
-require './markdown_manager'
-require './specials_manager'
+require './app/products/product_manager'
+require './app/markdowns/markdown_manager'
+require './app/specials/specials_manager'
 
 class PointOfSaleSystem
   attr_accessor :products, :markdowns, :specials

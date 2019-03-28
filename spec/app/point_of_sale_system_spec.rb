@@ -1,5 +1,5 @@
 require 'rspec'
-require './point_of_sale_system'
+require './app/point_of_sale_system'
 
 describe PointOfSaleSystem do
   it 'should be able to create' do

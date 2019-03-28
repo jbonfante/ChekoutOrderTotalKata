@@ -1,5 +1,5 @@
 require 'rspec'
-require './markdown_manager'
+require './app/markdowns/markdown_manager'
 
 describe MarkdownManager do
 

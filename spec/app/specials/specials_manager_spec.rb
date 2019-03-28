@@ -1,5 +1,5 @@
 require 'rspec'
-require './specials_manager'
+require './app/specials/specials_manager'
 
 describe SpecialsManager do
 

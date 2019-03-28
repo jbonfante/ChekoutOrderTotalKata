@@ -93,6 +93,11 @@ describe Product do
 
       end
 
+      it 'should not change unit if weight is missing' do
+        expect {subject.update({unit: 'lb'})}
+          .not_to change {subject.by_weight}
+      end
+
     end
 
   end

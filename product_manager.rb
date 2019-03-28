@@ -17,6 +17,7 @@ class ProductManager
       if existing_product.nil?
         product = Product.new(options.merge({id: id_counter}))
         product_list.push(product)
+        logger.info(product)
         self.id_counter += 1
       elsif options[:update].present?
         update_product(existing_product.id, options)

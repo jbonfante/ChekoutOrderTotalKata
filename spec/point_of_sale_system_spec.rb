@@ -1,7 +1,5 @@
 require 'rspec'
 require './point_of_sale_system'
-require './product_manager'
-require './markdown_manager'
 
 describe PointOfSaleSystem do
   it 'should be able to create' do
@@ -37,6 +35,12 @@ describe PointOfSaleSystem do
   context 'Markdowns' do
     it 'should have a MarkdownManager instance' do
       expect(subject.markdowns).to be_an_instance_of(MarkdownManager)
+    end
+  end
+
+  context 'Specials' do
+    it 'should have a SpecialsManager instance' do
+      expect(subject.specials).to be_an_instance_of(SpecialsManager)
     end
   end
 

@@ -1,11 +1,9 @@
-class SpecialsManager
-  attr_accessor :specials_list, :logger, :id_counter
+require './app/base/base_manager'
+require './app/specials/special'
 
+class SpecialsManager < BaseManager
   def initialize
-    @id_counter   = 0
-    @logger       = Logger.new(STDOUT)
-    logger.level  = Logger::ERROR
-    @specials_list ||= []
+    super
+    @managed_klass = Special
   end
-
 end

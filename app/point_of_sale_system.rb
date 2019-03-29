@@ -16,6 +16,6 @@ class PointOfSaleSystem
   end
 
   def list_products
-    products.product_list
+    products.list
   end
 end

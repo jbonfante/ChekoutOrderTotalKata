@@ -1,10 +1,9 @@
-class MarkdownManager
-  attr_accessor :markdown_list, :logger, :id_counter
+require './app/base/base_manager'
+require './app/markdowns/markdown'
 
+class MarkdownManager < BaseManager
   def initialize
-    @id_counter   = 0
-    @logger       = Logger.new(STDOUT)
-    logger.level  = Logger::ERROR
-    @markdown_list ||= []
+    super
+    @managed_klass = Markdown
   end
 end

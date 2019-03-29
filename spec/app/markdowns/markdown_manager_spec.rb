@@ -5,7 +5,7 @@ describe MarkdownManager do
 
   context 'initialization' do
     it 'should have a list of markdown items' do
-      expect(subject.markdown_list).to be_a(Array)
+      expect(subject.list).to be_a(Array)
     end
 
     it 'should have an id_counter of zero' do

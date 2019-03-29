@@ -44,6 +44,12 @@ describe PointOfSaleSystem do
     end
   end
 
+  context 'Transactions' do
+    it 'should have a transactions array' do
+      expect(subject.transactions).to be_a(Array)
+    end
+  end
+
 end
 
 # USE CASES:

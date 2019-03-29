@@ -18,5 +18,5 @@ such as RVM to install new version of Ruby,
 #### Running Tests
     1. Run command `bundle exec rspec` in command line
     
-#### Notes
+#### Notes & Considerations
     - Currently Product names are case insensitive e.g. "ground beef" and "Ground Beef" are the same product

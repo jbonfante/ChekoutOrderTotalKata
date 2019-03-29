@@ -121,21 +121,38 @@ describe ProductManager do
         subject.add({ name: 'Ground beef', price: 0.99, by_weight: true, unit: 'lb'})
         subject.add({ name: 'test', price: 1.99 })
       end
-      it 'should find product by id' do
-        product = subject.find({ id: 0})
-        expect(product.id).to eql(0)
-        expect(product).to be_an_instance_of(Product)
+
+      context 'Name methods' do
+        it 'should find product by id' do
+          product = subject.find({ id: 0})
+          expect(product.id).to eql(0)
+          expect(product).to be_an_instance_of(Product)
+        end
+
+        it 'should return nil if not found' do
+          product = subject.find({ id: 10})
+          expect(product).to eql(nil)
+        end
+
+        it 'should find product by name' do
+          beef = subject.find({ name: 'ground beef'})
+          expect(beef).to be_an_instance_of(Product)
+        end
+      end
+      context 'Array Notation' do
+        it 'should find product by name' do
+          beef = subject['ground beef']
+          expect(beef).to be_an_instance_of(Product)
+        end
+
+        it 'should find product by id' do
+          beef = subject[0]
+          expect(beef).to be_an_instance_of(Product)
+          expect(beef.name).to eql('Ground beef')
+        end
       end
 
-      it 'should return nil if not found' do
-        product = subject.find({ id: 10})
-        expect(product).to eql(nil)
-      end
 
-      it 'should find product by name' do
-        beef = subject.find({ name: 'ground beef'})
-        expect(beef).to be_an_instance_of(Product)
-      end
     end
   end
 end

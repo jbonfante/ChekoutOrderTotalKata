@@ -30,6 +30,7 @@ class Product
         send( m, value ) if respond_to?( m )
       end
     end
+    self
   end
 
   private

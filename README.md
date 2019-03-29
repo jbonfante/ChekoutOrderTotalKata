@@ -20,3 +20,4 @@ such as RVM to install new version of Ruby,
     
 #### Notes & Considerations
     - Currently Product names are case insensitive e.g. "ground beef" and "Ground Beef" are the same product
+    - To simplify tests I chose not to make the managers Singletons

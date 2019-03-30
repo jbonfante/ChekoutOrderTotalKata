@@ -53,15 +53,15 @@ class BaseManager
     self[name]
   end
 
-  def append(item)
-    @list.push(item)
-    self
-  end
-
   def [](key)
     return @list.find { |item| item.id == key }  if key.kind_of?(Integer)
     @list.find { |item| item.name == key } || list.find { |item| item.name.downcase == key.downcase }
   end
 
+  private
 
+  def append(item)
+    @list.push(item)
+    self
+  end
 end

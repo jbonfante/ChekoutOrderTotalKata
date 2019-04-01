@@ -3,12 +3,14 @@ require './app/markdowns/markdown_manager'
 require './app/specials/specials_manager'
 
 class Transaction
-  attr_reader :transaction_id
+  attr_reader :transaction_id, :logger
   attr_accessor :items
 
   def initialize(id)
     @transaction_id = id
     @items = []
+    @logger      = Logger.new(STDOUT)
+    logger.level = Logger::INFO
   end
 
   def append(product_id, amount)
@@ -28,7 +30,7 @@ class Transaction
 end
 
 class PointOfSaleSystem
-  attr_accessor :products, :markdowns, :specials, :transactions, :transaction_counter
+  attr_accessor :products, :markdowns, :specials, :transactions, :transaction_counter, :logger
 
   def initialize
     @products            = ProductManager.new
@@ -36,16 +38,24 @@ class PointOfSaleSystem
     @specials            = SpecialsManager.new
     @transaction_counter = 0
     @transactions        = []
+    @logger      = Logger.new(STDOUT)
+    logger.level = Logger::INFO
+
     start_transaction
   end
 
-  def total
+  def sub_total
     current_transaction.items.map do |item|
       prod = products[item[:id]]
       price = (markdowns[item[:id]] || prod).price
       amt  =  prod.by_weight ? item[:amount] : (item[:amount]).ceil
       (price * amt)
-    end.inject(0.0, &:+).truncate(2)
+    end
+  end
+
+  def total
+    ((sub_total.inject(0.0, &:+)) + apply_specials_discount)
+      .truncate(2)
   end
 
   def list_products
@@ -75,6 +85,40 @@ class PointOfSaleSystem
       current_transaction.delete(found.id)
     end
     self
+  end
+
+  def applicable_specials
+    current_transaction.items.map do |item|
+      prod = products[item[:id]]
+      specials.find({product_id: prod.id })
+    end.uniq
+  end
+
+  def apply_specials_discount
+    applicable_specials.map do |special|
+      if special
+        product = products.find({id: special.product_id})
+        n_items = special.n_items
+        m_items =special.m_items
+        min_items = n_items + m_items
+
+        purchased_items = current_transaction
+                            .items
+                            .filter {|x| x[:id] == special.product_id}
+                            .inject(0.0) {|x,y| y[:amount] + x }
+
+        # puts("pur #{purchased_items}")
+        # puts("min items: #{min_items}")
+        # puts "@@@@@@@@@@@@@@@@@"
+        if purchased_items >= min_items
+          discount = (purchased_items/min_items).floor
+          logger.info(discount)
+          0 - (product.price * discount)
+        end
+      else
+        0.0
+      end
+    end.reduce(0.0, &:+)
   end
 
 

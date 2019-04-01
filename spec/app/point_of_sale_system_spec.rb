@@ -90,10 +90,66 @@ describe PointOfSaleSystem do
   context 'Specials' do
     before(:each) do
       subject.products.add({ name: 'Ground beef', price: 0.99, by_weight: true, unit: 'lb'})
-      subject.products.add({ name: 'test', price: 1.99 })
+      subject.products.add({ name: 'test', price: 2.00 })
     end
+
     it 'should have a SpecialsManager instance' do
       expect(subject.specials).to be_an_instance_of(SpecialsManager)
+    end
+
+    it 'should add a BOGO special' do
+      subject.specials
+        .add({name: 'Buy 1 Get 1 Free', product_id: 1, n_items: 1, m_items: 1, free: true})
+      expect(subject.specials.list.length).to eql(1)
+    end
+
+    context 'BOGO Specials' do
+      before(:each) do
+        subject
+          .specials
+          .add({name: 'Buy 1 Get 1 Free', product_id: 1, n_items: 1, m_items: 1, free: true})
+      end
+
+      it 'should use Specials discount buy one get one' do
+        subject.scan_product('test', 2)
+        expect(subject.total).to eql(2.0)
+      end
+
+      it 'should give 2 free when purchasing 4' do
+        subject
+          .scan_product('test', 2)
+          .scan_product('test', 2)
+        expect(subject.total).to eql(4.0)
+      end
+
+      it 'should give 2 free when purchasing 5' do
+        subject
+          .scan_product('test', 2)
+          .scan_product('test', 2)
+          .scan_product('test', 1)
+        expect(subject.total).to eql(6.00)
+
+      end
+
+      it 'should give 3 free when purchasing 6' do
+        subject
+          .scan_product('test', 6)
+        expect(subject.total).to eql(6.00)
+
+      end
+
+      it 'should give 3 free when purchasing 7' do
+        subject
+          .scan_product('test', 7)
+        expect(subject.total).to eql(8.00)
+      end
+
+      it 'should give 50 free when purchasing 100' do
+        subject
+          .scan_product('test', 100)
+        expect(subject.total).to eql(100.0)
+      end
+
     end
   end
 

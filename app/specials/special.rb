@@ -19,4 +19,8 @@ class Special
     return false unless free || x_off == 100
     true
   end
+
+  def to_s
+    "#{name}"
+  end
 end

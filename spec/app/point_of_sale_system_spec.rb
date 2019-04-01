@@ -37,12 +37,38 @@ describe PointOfSaleSystem do
   end
 
   context 'Markdowns' do
+    before(:each) do
+      subject.products.add({ name: 'Ground beef', price: 0.99, by_weight: true, unit: 'lb'})
+      subject.products.add({ name: 'test', price: 1.99 })
+    end
+
     it 'should have a MarkdownManager instance' do
       expect(subject.markdowns).to be_an_instance_of(MarkdownManager)
+    end
+
+    it 'should add a markdown for product' do
+      product = subject.products[0]
+      markdown = { product_id: product.id, price: 0.49, name: product.name }
+      expect{ subject.markdowns.add(markdown) }
+        .to change { subject.markdowns.list.length }
+              .from(0).to(1)
+    end
+
+    it 'should use the markdown as item cost' do
+      product = subject.products[0]
+      markdown = { product_id: product.id, price: 0.49, name: product.name }
+      subject.markdowns.add(markdown)
+      subject.scan_product('ground beef', 1)
+
+      expect(subject.total).to eql(0.49)
     end
   end
 
   context 'Specials' do
+    before(:each) do
+      subject.products.add({ name: 'Ground beef', price: 0.99, by_weight: true, unit: 'lb'})
+      subject.products.add({ name: 'test', price: 1.99 })
+    end
     it 'should have a SpecialsManager instance' do
       expect(subject.specials).to be_an_instance_of(SpecialsManager)
     end

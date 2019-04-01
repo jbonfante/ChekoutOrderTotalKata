@@ -1,14 +1,15 @@
 class Product
   attr_accessor :name, :price, :by_weight, :unit
-  attr_reader :id
+  attr_reader :id, :created_at
 
   def initialize(options = {})
+    @id = options[:id] || 0
+    @by_weight = options[:by_weight] || false
     @name = options[:name] || ''
     @price = options[:price] || 0.0
 
     set_product_unit(options)
-    @by_weight = options[:by_weight] || false
-    @id = options[:id] || 0
+    @created_at = DateTime.now
   end
 
   def cost

@@ -34,12 +34,22 @@ describe PointOfSaleSystem do
     it 'should calculate order total' do
       expect(subject.total).to eq(0.0)
     end
+
+    it 'should maintain total after deleting a scanned item' do
+      subject.products.add({ name: 'Ground beef', price: 0.99, by_weight: true, unit: 'lb'})
+      subject.scan_product(0, 1)
+
+      expect(subject.total).to eq(0.99)
+      expect(subject.removed_scanned_item(0).total).to eql(0.0)
+    end
+
   end
 
   context 'Markdowns' do
     before(:each) do
       subject.products.add({ name: 'Ground beef', price: 0.99, by_weight: true, unit: 'lb'})
       subject.products.add({ name: 'test', price: 1.99 })
+      subject.products.add({ name: 'Shampoo', price: 10.99 })
     end
 
     it 'should have a MarkdownManager instance' do
@@ -53,14 +63,27 @@ describe PointOfSaleSystem do
         .to change { subject.markdowns.list.length }
               .from(0).to(1)
     end
+    context 'with valid markdown' do
+      before(:each) do
+        products = subject.products
+        subject.markdowns.add({ product_id: products[0].id, price: 0.49, name: products[0].name })
+        subject.markdowns.add({ product_id: products[1].id, price: 0.99, name: products[1].name })
+      end
 
-    it 'should use the markdown as item cost' do
-      product = subject.products[0]
-      markdown = { product_id: product.id, price: 0.49, name: product.name }
-      subject.markdowns.add(markdown)
-      subject.scan_product('ground beef', 1)
+      it 'should use the markdown as item cost' do
+        subject.scan_product(1, 1)
+        expect(subject.total).to eql(0.99)
+      end
 
-      expect(subject.total).to eql(0.49)
+      it 'should use item cost for weighted items' do
+        subject.scan_product(0, 0.5)
+        expect(subject.total).to eql(0.24)
+      end
+
+      it 'should not apply a markdown for items without one' do
+        subject.scan_product(2, 2)
+        expect(subject.total).to eql(21.98)
+      end
     end
   end
 
@@ -135,6 +158,13 @@ describe PointOfSaleSystem do
 
         expect(subject.total).to eql(28.28)
       end
+
+      it 'should round decimals up for items sold with each pricing' do
+        subject.scan_product(1, 0.5)
+        expect(subject.total).to eql(1.99)
+      end
+
+
     end
 
 

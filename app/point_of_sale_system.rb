@@ -17,7 +17,7 @@ class Transaction
   end
 
   def delete(product_id)
-    items.delete_at(items.index {|x| x.id == product_id})
+    items.delete_at(items.index {|x| x[:id] == product_id})
   end
 
   def modify(product_id, amount)
@@ -42,8 +42,9 @@ class PointOfSaleSystem
   def total
     current_transaction.items.map do |item|
       prod = products[item[:id]]
-      amt  = item[:amount]
-      (prod.price * amt)
+      price = (markdowns[item[:id]] || prod).price
+      amt  =  prod.by_weight ? item[:amount] : (item[:amount]).ceil
+      (price * amt)
     end.inject(0.0, &:+).truncate(2)
   end
 
@@ -65,6 +66,13 @@ class PointOfSaleSystem
   def scan_product(product_id, amount)
     if (found = products[product_id])
       current_transaction.append(found.id, amount)
+    end
+    self
+  end
+
+  def removed_scanned_item(product_id)
+    if (found = products[product_id])
+      current_transaction.delete(found.id)
     end
     self
   end

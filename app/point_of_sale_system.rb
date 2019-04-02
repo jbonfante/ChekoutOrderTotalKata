@@ -102,17 +102,22 @@ class PointOfSaleSystem
         m_items =special.m_items
         min_items = n_items + m_items
 
-        purchased_items = current_transaction
-                            .items
-                            .filter {|x| x[:id] == special.product_id}
-                            .inject(0.0) {|x,y| y[:amount] + x }
+        all_scans = current_transaction
+                .items
+                .filter {|x| x[:id] == special.product_id}
+                .map {|x| x[:amount]}
 
-        puts("pur #{purchased_items}")
-        puts("min items: #{min_items}")
-        puts "limit: #{special.limit}"
-        puts "@@@@@@@@@@@@@@@@@"
+        purchased_items = all_scans
+                            .inject(0.0) {|x,y| y + x }
+
+        max_item = all_scans.max
+
         if purchased_items >= min_items
           purchased_items = check_limits(purchased_items, special)
+
+          if product.by_weight?
+            purchased_items -= max_item
+          end
 
           discount = if special.x_off
                        special.x_off * (purchased_items/min_items).floor

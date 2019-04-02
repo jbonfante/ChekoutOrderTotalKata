@@ -24,6 +24,10 @@ class Product
     "Product: \tID: #{id} #{name} \t Price: #{cost}"
   end
 
+  def by_weight?
+    by_weight
+  end
+
   def update(options={})
     if valid_weight_options?(options)
       options.each do |key, value|

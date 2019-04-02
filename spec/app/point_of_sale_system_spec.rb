@@ -182,18 +182,16 @@ describe PointOfSaleSystem do
           .scan_product('test', 100)
         expect(subject.total).to eql(100.0)
       end
-
-      # # Support a limit on specials, for example, "buy 2 get 1 free, limit 6" would prevent getting a third free item.
-
-
     end
-    context "with purchase Limits" do
+
+    context "Support a limit on specials" do
       before(:each) do
         subject
           .specials
           .add({name: 'Buy 2 Get 1 Free, limit 6', product_id: 1, n_items: 2, m_items: 1, free: true, limit: 6})
       end
 
+      # # for example, "buy 2 get 1 free,  limit 6" would prevent getting a third free item.
       it 'should support not give free item after 6' do
         subject.scan_product('test', 1) # 1
         expect(subject.total).to eql(2.00)
@@ -228,7 +226,19 @@ describe PointOfSaleSystem do
         subject.scan_product('test', 10) # 11-20th
         expect(subject.total).to eql(36.00)
       end
+    end
+    context 'Support "Buy N, get M of equal or lesser value for %X off" on weighted items.' do
+      before(:each) do
+        subject
+          .specials
+          .add({name: 'Buy Beef Get Beef of equal or lesser value for 50% off', product_id: 0, n_items: 1, m_items: 1, x_off: 50})
+      end
 
+      it 'charges 50% off for lesser value item' do
+        subject.scan_product('Ground Beef', 3.0) # (.99 * 3.0) = 3.97
+        subject.scan_product('Ground Beef', 2.5) # (.99 * 2.5) * .5 = 1.23
+        expect(subject.total).to eql(5.20)
+      end
     end
   end
 
@@ -298,20 +308,6 @@ describe PointOfSaleSystem do
         subject.scan_product(1, 0.5)
         expect(subject.total).to eql(1.99)
       end
-
-
     end
-
-
   end
-
 end
-
-# USE CASES:
-
-# #   Support a markdown. A marked-down item will reflect the eaches cost less the markdown when scanned. A weighted item with a markdown will reflect that reduction in cost per unit.
-# #   Support a special in the form of "Buy N items get M at %X off." For example, "Buy 1 get 1 free" or "Buy 2 get 1 half off."
-# # Support a special in the form of "N for $X." For example, "3 for $5.00"
-# # Support a limit on specials, for example, "buy 2 get 1 free, limit 6" would prevent getting a third free item.
-# #   Support removing a scanned item, keeping the total correct after possibly invalidating a special.
-# #     Support "Buy N, get M of equal or lesser value for %X off" on weighted items.

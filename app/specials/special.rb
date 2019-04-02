@@ -32,4 +32,8 @@ class Special
   def to_s
     "#{name}"
   end
+
+  def limit?
+    limit > 0
+  end
 end

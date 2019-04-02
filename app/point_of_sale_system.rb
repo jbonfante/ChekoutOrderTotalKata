@@ -109,8 +109,11 @@ class PointOfSaleSystem
 
         puts("pur #{purchased_items}")
         puts("min items: #{min_items}")
+        puts "limit: #{special.limit}"
         puts "@@@@@@@@@@@@@@@@@"
         if purchased_items >= min_items
+          purchased_items = check_limits(purchased_items, special)
+
           discount = if special.x_off
                        special.x_off * (purchased_items/min_items).floor
                      else
@@ -124,6 +127,15 @@ class PointOfSaleSystem
         0.0
       end
     end.compact.reduce(0.0, &:+)
+  end
+
+  private
+
+  def check_limits(purchased_items, special)
+    if special.limit? && purchased_items > special.limit
+      purchased_items = special.limit
+    end
+    purchased_items
   end
 
 

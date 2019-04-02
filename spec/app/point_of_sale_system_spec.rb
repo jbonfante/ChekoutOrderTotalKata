@@ -191,13 +191,42 @@ describe PointOfSaleSystem do
       before(:each) do
         subject
           .specials
-          .add({name: 'Buy 2 Get 1 Free, limit 6', product_id: 1, n_items: 1, m_items: 1, free: true, limit: 6})
+          .add({name: 'Buy 2 Get 1 Free, limit 6', product_id: 1, n_items: 2, m_items: 1, free: true, limit: 6})
       end
 
-      xit 'should support not give free item after 6' do
-        subject
-          .scan_product('test', 8)
+      it 'should support not give free item after 6' do
+        subject.scan_product('test', 1) # 1
+        expect(subject.total).to eql(2.00)
+
+        subject.scan_product('test', 1) # 2
+        expect(subject.total).to eql(4.00)
+
+        subject.scan_product('test', 1) # 3rd free
+        expect(subject.total).to eql(4.00)
+
+        subject.scan_product('test', 1) # 4th
+        expect(subject.total).to eql(6.00)
+
+        subject.scan_product('test', 1) # 5th
+        expect(subject.total).to eql(8.00)
+
+        subject.scan_product('test', 1) # 6th free
+        expect(subject.total).to eql(8.00)
+
+        subject.scan_product('test', 1) # 7th
+        expect(subject.total).to eql(10.00)
+
+        subject.scan_product('test', 1) # 8th
         expect(subject.total).to eql(12.00)
+
+        subject.scan_product('test', 1) # 9th
+        expect(subject.total).to eql(14.00)
+
+        subject.scan_product('test', 1) #10th
+        expect(subject.total).to eql(16.00)
+
+        subject.scan_product('test', 10) # 11-20th
+        expect(subject.total).to eql(36.00)
       end
 
     end

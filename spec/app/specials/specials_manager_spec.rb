@@ -41,7 +41,7 @@ describe SpecialsManager do
           expect(sp.bogo?).to be_falsey
           expect(sp.n_items).to eql(2)
           expect(sp.m_items).to eql(1)
-          expect(sp.x_off).to eql(50)
+          expect(sp.x_off).to eql(0.5)
         end
 
       end

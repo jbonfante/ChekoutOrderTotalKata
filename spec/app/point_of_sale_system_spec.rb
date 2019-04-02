@@ -96,7 +96,40 @@ describe PointOfSaleSystem do
     it 'should have a SpecialsManager instance' do
       expect(subject.specials).to be_an_instance_of(SpecialsManager)
     end
+    # #   Support a special in the form of "Buy N items get M at %X off."
+    #     "Buy 2 get 1 half off."
+    it 'should add Buy 2 get 1 half off' do
+      subject.specials
+        .add({name: 'Buy 2 get 1 half off', product_id: 1, n_items: 2, m_items: 1, x_off: 50 })
+      expect(subject.specials.list.length).to eql(1)
+    end
 
+    context 'Buy N get M at %X off' do
+      before(:each) do
+        subject
+          .specials
+          .add({name: 'Buy 2 get 1 half off', product_id: 1, n_items: 2, m_items: 1, x_off: 50 })
+      end
+
+      it 'should add the 3rd item at half off' do
+        subject.scan_product('test', 3)
+        expect(subject.total).to eql(5.0)
+      end
+
+      it 'should add the 3rd item and 6th at half off' do
+        subject.scan_product('test', 6)
+        expect(subject.total).to eql(10.0)
+      end
+
+      it 'should add the 3rd,6th, and 9th at half off' do
+        subject.scan_product('test', 9)
+        expect(subject.total).to eql(15.0)
+      end
+
+
+    end
+    
+    # #   For example, "Buy 1 get 1 free" 
     it 'should add a BOGO special' do
       subject.specials
         .add({name: 'Buy 1 Get 1 Free', product_id: 1, n_items: 1, m_items: 1, free: true})
@@ -148,6 +181,23 @@ describe PointOfSaleSystem do
         subject
           .scan_product('test', 100)
         expect(subject.total).to eql(100.0)
+      end
+
+      # # Support a limit on specials, for example, "buy 2 get 1 free, limit 6" would prevent getting a third free item.
+
+
+    end
+    context "with purchase Limits" do
+      before(:each) do
+        subject
+          .specials
+          .add({name: 'Buy 2 Get 1 Free, limit 6', product_id: 1, n_items: 1, m_items: 1, free: true, limit: 6})
+      end
+
+      xit 'should support not give free item after 6' do
+        subject
+          .scan_product('test', 8)
+        expect(subject.total).to eql(12.00)
       end
 
     end

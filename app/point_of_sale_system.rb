@@ -107,18 +107,23 @@ class PointOfSaleSystem
                             .filter {|x| x[:id] == special.product_id}
                             .inject(0.0) {|x,y| y[:amount] + x }
 
-        # puts("pur #{purchased_items}")
-        # puts("min items: #{min_items}")
-        # puts "@@@@@@@@@@@@@@@@@"
+        puts("pur #{purchased_items}")
+        puts("min items: #{min_items}")
+        puts "@@@@@@@@@@@@@@@@@"
         if purchased_items >= min_items
-          discount = (purchased_items/min_items).floor
+          discount = if special.x_off
+                       special.x_off * (purchased_items/min_items).floor
+                     else
+                       (purchased_items/min_items).floor
+                     end
           logger.info(discount)
+          logger.info(special.x_off)
           0 - (product.price * discount)
         end
       else
         0.0
       end
-    end.reduce(0.0, &:+)
+    end.compact.reduce(0.0, &:+)
   end
 
 
